@@ -21,7 +21,6 @@ import frc.robot.commands.Auto.*;
 
 
 import frc.robot.Constants.DriverControllerConstants;
-import frc.robot.commands.PathfindToPose;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.Autos;

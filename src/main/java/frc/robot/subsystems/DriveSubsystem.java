@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -27,8 +26,6 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.utils.*;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -319,15 +316,6 @@ public class DriveSubsystem extends SubsystemBase {
   
       SwerveModuleState[] targetStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(targetSpeeds);
       setModuleStates(targetStates);
-  }
-
-  
-  /* Initializes the robot before following trajectory */
-  public void initForTrajectory(PathPlannerPath m_trajectory){
-    
-    new SequentialCommandGroup(
-      new InstantCommand(() -> this.resetOdometry(m_trajectory.getPreviewStartingHolonomicPose())),
-      new InstantCommand(() -> this.stopModules()));
   }
 
   /* Creates a pathplanner autobuilder for autonomous pathing */

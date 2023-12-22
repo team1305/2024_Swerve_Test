@@ -7,7 +7,8 @@ package frc.robot.commands.Auto;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.TrajectoryResolver;
@@ -23,7 +24,7 @@ public class SwerveAccuracyTest extends SequentialCommandGroup {
     PathPlannerPath path1 = TrajectoryResolver.getTrajectoryFromPath(name);
   
     addCommands(
-      new InstantCommand(() -> drivebase.initForTrajectory(path1)),
+      Commands.runOnce(() -> drivebase.resetOdometry(path1.getPreviewStartingHolonomicPose())),
       AutoBuilder.followPathWithEvents(path1)
     );
   }
