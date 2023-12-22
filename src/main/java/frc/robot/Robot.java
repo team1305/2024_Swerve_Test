@@ -111,6 +111,7 @@ public class Robot extends TimedRobot {
     new PathPlannerAuto("Straight Auto");
     new PathPlannerAuto("S Curve");
     new PathPlannerAuto("Swerve Accuracy Test");
+    new PathPlannerAuto("Swerve Wait Auto");
     SmartDashboard.putData("Auto Mode", autoChooser);
   }
 
