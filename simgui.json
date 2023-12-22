@@ -7,11 +7,26 @@
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
     },
     "windows": {
-      "/SmartDashboard/SendableChooser[0]": {
+      "/SmartDashboard/Auto Mode": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field": {
         "window": {
           "visible": true
         }
       }
     }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "FMSInfo": {
+        "open": true
+      }
+    }
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

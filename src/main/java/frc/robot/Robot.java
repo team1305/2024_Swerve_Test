@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ToggleDriveCentricity;
-import frc.robot.commands.Auto.*;
 
 
 import frc.robot.Constants.DriverControllerConstants;
@@ -56,7 +55,7 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings(){
     new JoystickButton(m_controller, DriverControllerConstants.RIGHT_BUMPER).onTrue(new ToggleDriveCentricity(m_drive));
     new JoystickButton(m_controller, DriverControllerConstants.LEFT_BUMPER).whileTrue(new RunCommand(() -> m_drive.setX(),m_drive));
-    new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).whileTrue(new RunCommand(() -> m_drive.PathFindToPose(0.0, 0.0, 0.0, 0.0, 0.0),m_drive));
+    new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).whileTrue(new RunCommand(() -> m_drive.PathFindToPose(7.0, 1.0, 0.0, 0.0, 0.0),m_drive));
     //new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).whileTrue(new PathfindToPose(m_drive, 0.0, 0.0, 0.0, 0.0, 0.0));
   }
 
@@ -109,6 +108,9 @@ public class Robot extends TimedRobot {
 
   private void setupAutoChoosers(){ 
     new PathPlannerAuto("Example Auto1");
+    new PathPlannerAuto("Straight Auto");
+    new PathPlannerAuto("S Curve");
+    new PathPlannerAuto("Swerve Accuracy Test");
     SmartDashboard.putData("Auto Mode", autoChooser);
   }
 

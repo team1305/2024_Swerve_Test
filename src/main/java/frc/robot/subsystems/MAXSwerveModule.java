@@ -115,10 +115,6 @@ public class MAXSwerveModule {
 
   public void setDesiredState(SwerveModuleState desiredState) {
     // Sets the desired state of the module, takes in a speed and angle.
-    if (Math.abs(desiredState.speedMetersPerSecond) < 0.001) {
-      stop();
-      return;
-    }
 
     // Apply chassis angular offset to the desired state.
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
