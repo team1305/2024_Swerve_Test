@@ -12,14 +12,14 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.TrajectoryResolver;
 
-public class StraightPath extends SequentialCommandGroup {
+public class SwerveAccuracyTest extends SequentialCommandGroup {
   /** Creates a new TwoCubeBalance. */
-  public StraightPath(
+  public SwerveAccuracyTest(
     DriveSubsystem drivebase
   ) {
     super();
     addRequirements(drivebase);
-    String name = "Straight_Path";
+    String name = "Swerve_Accuracy_Test";
     PathPlannerPath path1 = TrajectoryResolver.getTrajectoryFromPath(name);
   
     addCommands(

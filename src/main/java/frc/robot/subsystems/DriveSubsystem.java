@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -26,6 +27,8 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.utils.*;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -105,7 +108,7 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     smartDashBoardOutput();
-    m_field.setRobotPose(m_odometry.getPoseMeters());
+    m_field.setRobotPose(getPose());
     // Update the odometry in the periodic block
     m_odometry.update(
         Rotation2d.fromDegrees(-m_gyro.getAngle()),
@@ -316,8 +319,18 @@ public class DriveSubsystem extends SubsystemBase {
   
       SwerveModuleState[] targetStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(targetSpeeds);
       setModuleStates(targetStates);
-  }  
+  }
 
+  
+  /* Initializes the robot before following trajectory */
+  public void initForTrajectory(PathPlannerPath m_trajectory){
+    
+    new SequentialCommandGroup(
+      new InstantCommand(() -> this.resetOdometry(m_trajectory.getPreviewStartingHolonomicPose())),
+      new InstantCommand(() -> this.stopModules()));
+  }
+
+  /* Creates a pathplanner autobuilder for autonomous pathing */
   public void configureAutoBuilder() {
     AutoBuilder.configureHolonomic(
       this::getPose, 
@@ -327,7 +340,8 @@ public class DriveSubsystem extends SubsystemBase {
       configurePathFollower(), 
       this);
   }
-    
+  
+  /* Configures the robot for Holonomic Path following*/
   public HolonomicPathFollowerConfig configurePathFollower() {
     return new HolonomicPathFollowerConfig(new PIDConstants(AutoConstants.kPXController, 0, 0), 
     new PIDConstants(AutoConstants.kPThetaController, 0, 0), 
@@ -336,6 +350,7 @@ public class DriveSubsystem extends SubsystemBase {
     new ReplanningConfig());
   }
 
+  /* Creates a target pose and command for the robot to travel to */
   public Command PathFindToPose(double x, double y, double rot, double endvelocity, double rotdelay ) {
     Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(rot));
     PathConstraints constraints = new PathConstraints(

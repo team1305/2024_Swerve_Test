@@ -17,8 +17,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ToggleDriveCentricity;
-import frc.robot.commands.Auto.StraightPath;
-import frc.robot.commands.Auto.SCurve;
+import frc.robot.commands.Auto.*;
+
+
 import frc.robot.Constants.DriverControllerConstants;
 import frc.robot.commands.PathfindToPose;
 import frc.robot.commands.SwerveDrive;
@@ -53,7 +54,8 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings(){
     new JoystickButton(m_controller, DriverControllerConstants.RIGHT_BUMPER).onTrue(new ToggleDriveCentricity(m_drive));
     new JoystickButton(m_controller, DriverControllerConstants.LEFT_BUMPER).whileTrue(new RunCommand(() -> m_drive.setX(),m_drive));
-    new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).whileTrue(new PathfindToPose(m_drive, 0.0, 0.0, 0.0, 0.0, 0.0));
+    new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).whileTrue(new RunCommand(() -> m_drive.PathFindToPose(0.0, 0.0, 0.0, 0.0, 0.0),m_drive));
+    //new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).whileTrue(new PathfindToPose(m_drive, 0.0, 0.0, 0.0, 0.0, 0.0));
   }
 
   private void setDefaultCommands(){
@@ -105,6 +107,7 @@ public class Robot extends TimedRobot {
 
   private void setupAutoChoosers(){ 
     m_AutoMenuChooser.addOption("S Curve", Autos.s_curve);
+    m_AutoMenuChooser.addOption("Swerve Accuracy Test", Autos.swerve_accuracy_test);
     m_AutoMenuChooser.setDefaultOption("Straight path", Autos.straight_path);
     SmartDashboard.putData(m_AutoMenuChooser);
   }
@@ -116,6 +119,8 @@ public class Robot extends TimedRobot {
         return new StraightPath(m_drive);
       case s_curve:
         return new SCurve(m_drive);
+      case swerve_accuracy_test:
+        return new SwerveAccuracyTest(m_drive);
       default:
         return new StraightPath(m_drive);
     }
