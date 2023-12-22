@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 // End - This can be deleted once we get autos working properly
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -23,7 +26,7 @@ import frc.robot.commands.Auto.*;
 import frc.robot.Constants.DriverControllerConstants;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.utils.Autos;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -36,9 +39,9 @@ public class Robot extends TimedRobot {
   private final DriveSubsystem m_drive = new DriveSubsystem(true);
 
   public static final XboxController m_controller = new XboxController(0);
+  
 
-  private final SendableChooser<Autos> m_AutoMenuChooser = new SendableChooser<Autos>();
-
+  private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -105,24 +108,12 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   private void setupAutoChoosers(){ 
-    m_AutoMenuChooser.addOption("S Curve", Autos.s_curve);
-    m_AutoMenuChooser.addOption("Swerve Accuracy Test", Autos.swerve_accuracy_test);
-    m_AutoMenuChooser.setDefaultOption("Straight path", Autos.straight_path);
-    SmartDashboard.putData(m_AutoMenuChooser);
+    new PathPlannerAuto("Example Auto1");
+    SmartDashboard.putData("Auto Mode", autoChooser);
   }
 
   public Command getAutonomousCommand() {
-    Autos auto = m_AutoMenuChooser.getSelected();
-    switch(auto){
-      case straight_path:
-        return new StraightPath(m_drive);
-      case s_curve:
-        return new SCurve(m_drive);
-      case swerve_accuracy_test:
-        return new SwerveAccuracyTest(m_drive);
-      default:
-        return new StraightPath(m_drive);
-    }
+    return autoChooser.getSelected();
   }
 
   @Override
