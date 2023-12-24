@@ -8,6 +8,7 @@ package frc.robot;
 // Start - this can be deleted once we get autos working properly
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 // End - This can be deleted once we get autos working properly
 
@@ -20,8 +21,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ToggleDriveCentricity;
-
-
 import frc.robot.Constants.DriverControllerConstants;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.DriveSubsystem;
@@ -56,7 +55,18 @@ public class Robot extends TimedRobot {
     new JoystickButton(m_controller, DriverControllerConstants.RIGHT_BUMPER).onTrue(new ToggleDriveCentricity(m_drive));
     new JoystickButton(m_controller, DriverControllerConstants.LEFT_BUMPER).whileTrue(new RunCommand(() -> m_drive.setX(),m_drive));
     new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).whileTrue(new RunCommand(() -> m_drive.PathFindToPose(7.0, 1.0, 0.0, 0.0, 0.0),m_drive));
-    //new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).whileTrue(new PathfindToPose(m_drive, 0.0, 0.0, 0.0, 0.0, 0.0));
+
+    new JoystickButton(m_controller, DriverControllerConstants.B_BUTTON).onTrue(new InstantCommand(() -> {
+            m_drive.turnOnLocationLock(180);
+        })).onFalse(new InstantCommand(() -> {
+            m_drive.turnOfLocationLock();
+        }));
+
+    new JoystickButton(m_controller, DriverControllerConstants.Y_BUTTON).onTrue(new InstantCommand(() -> {
+            m_drive.turnOnLocationLock(0);
+        })).onFalse(new InstantCommand(() -> {
+            m_drive.turnOfLocationLock();
+        }));
   }
 
   private void setDefaultCommands(){

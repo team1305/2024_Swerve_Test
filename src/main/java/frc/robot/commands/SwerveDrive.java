@@ -36,11 +36,18 @@ public class SwerveDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.drive(
+    m_drive.driveWithRotationLock(
+      -MathUtil.applyDeadband(m_Y.getAsDouble(), OIConstants.kDriveDeadband),
+      -MathUtil.applyDeadband(m_X.getAsDouble(), OIConstants.kDriveDeadband),
+      -MathUtil.applyDeadband(m_Z.getAsDouble(), OIConstants.kDriveDeadband));
+    
+    /* REMOVE THIS IF THE ABOVE DOESN'T WORK
+      m_drive.drive(
       -MathUtil.applyDeadband(m_Y.getAsDouble(), OIConstants.kDriveDeadband),
       -MathUtil.applyDeadband(m_X.getAsDouble(), OIConstants.kDriveDeadband),
       -MathUtil.applyDeadband(m_Z.getAsDouble(), OIConstants.kDriveDeadband)
     );
+    */
   }
 
   // Called once the command ends or is interrupted.

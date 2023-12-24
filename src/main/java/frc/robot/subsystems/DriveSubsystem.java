@@ -10,6 +10,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,8 +19,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.WPIUtilJNI;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
@@ -33,7 +35,11 @@ public class DriveSubsystem extends SubsystemBase {
   private boolean m_isFieldCentric;
   private boolean m_rateLimit = true;
 
-  public Timer m_timer;
+  private boolean locationLock;
+  private PIDController locationLockPID;
+  private Boolean isRedAlliance;
+  private NetworkTable fms_table;
+
   private Field2d m_field = new Field2d();
   
   // Create MAXSwerveModules
@@ -84,6 +90,12 @@ public class DriveSubsystem extends SubsystemBase {
     zeroHeading();  
     configureAutoBuilder();
     m_isFieldCentric = startFieldCentric;
+
+    locationLock = false;
+    locationLockPID = new PIDController(0.1, 0, 0);
+
+    fms_table = NetworkTableInstance.getDefault().getTable("FMSInfo");
+    isRedAlliance = fms_table.getEntry("IsRedAlliance").getBoolean(true);
   }
 
   /* Outputs values to smartdashboard */
@@ -93,6 +105,32 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putData("Field", m_field);
   }
 
+  /**
+     * Lock swerve drive to be at one angle.
+     */
+  public void turnOnLocationLock(double angle) {
+      locationLock = true;
+
+      if (isRedAlliance) {
+          angle += 180;
+      }
+      
+      locationLockPID.setSetpoint(angle);
+      locationLockPID.calculate(-m_gyro.getAngle());
+  }
+
+  public void turnOfLocationLock() {
+      locationLock = false;
+  }
+
+  public void driveWithRotationLock(double xSpeed, double yspeed, 
+      double rotation) {
+      if (locationLock) {
+          rotation = locationLockPID.calculate(-m_gyro.getAngle());
+      }
+      drive(xSpeed, yspeed, rotation);
+  }
+    
   /* Returns if the robot is field centric */
   public boolean getIsFieldCentric(){
     return m_isFieldCentric;
