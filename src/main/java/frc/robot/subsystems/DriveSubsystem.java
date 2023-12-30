@@ -24,6 +24,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.utils.*;
@@ -119,16 +120,20 @@ public class DriveSubsystem extends SubsystemBase {
       locationLockPID.calculate(-m_gyro.getAngle());
   }
 
-  public void turnOfLocationLock() {
+  public void turnOffLocationLock() {
       locationLock = false;
   }
 
-  public void driveWithRotationLock(double xSpeed, double yspeed, 
-      double rotation) {
-      if (locationLock) {
-          rotation = locationLockPID.calculate(-m_gyro.getAngle());
-      }
-      drive(xSpeed, yspeed, rotation);
+  public void driveWithRotationLock(double xSpeed, double yspeed, double rotation) {
+    // if there is joystick input changing the rotation, then location lock will turn off
+    // this will allow for lockin onto a rotation, and then turning it off when needed without pressing button again
+    if (Robot.m_controller.getRightX() != 0) {
+      turnOffLocationLock();
+    }
+    if (locationLock) {
+        rotation = locationLockPID.calculate(-m_gyro.getAngle());
+    }
+    drive(xSpeed, yspeed, rotation);
   }
     
   /* Returns if the robot is field centric */

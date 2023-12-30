@@ -58,14 +58,14 @@ public class Robot extends TimedRobot {
 
     new JoystickButton(m_controller, DriverControllerConstants.B_BUTTON).onTrue(new InstantCommand(() -> {
             m_drive.turnOnLocationLock(180);
-        })).onFalse(new InstantCommand(() -> {
-            m_drive.turnOfLocationLock();
         }));
+/*
+        .onFalse(new InstantCommand(() -> {
+            m_drive.turnOffLocationLock();
+        }));*/
 
     new JoystickButton(m_controller, DriverControllerConstants.Y_BUTTON).onTrue(new InstantCommand(() -> {
             m_drive.turnOnLocationLock(0);
-        })).onFalse(new InstantCommand(() -> {
-            m_drive.turnOfLocationLock();
         }));
   }
 
