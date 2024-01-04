@@ -54,19 +54,26 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings(){
     new JoystickButton(m_controller, DriverControllerConstants.RIGHT_BUMPER).onTrue(new ToggleDriveCentricity(m_drive));
     new JoystickButton(m_controller, DriverControllerConstants.LEFT_BUMPER).whileTrue(new RunCommand(() -> m_drive.setX(),m_drive));
-    new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).whileTrue(new RunCommand(() -> m_drive.PathFindToPose(7.0, 1.0, 0.0, 0.0, 0.0),m_drive));
-
-    new JoystickButton(m_controller, DriverControllerConstants.B_BUTTON).onTrue(new InstantCommand(() -> {
+    //new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).whileTrue(new RunCommand(() -> m_drive.PathFindToPose(7.0, 1.0, 0.0, 0.0, 0.0),m_drive));
+    
+    new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).onTrue(new InstantCommand(() -> {
             m_drive.turnOnLocationLock(180);
         }));
-/*
-        .onFalse(new InstantCommand(() -> {
-            m_drive.turnOffLocationLock();
-        }));*/
 
     new JoystickButton(m_controller, DriverControllerConstants.Y_BUTTON).onTrue(new InstantCommand(() -> {
             m_drive.turnOnLocationLock(0);
         }));
+
+    new JoystickButton(m_controller, DriverControllerConstants.X_BUTTON).onTrue(new InstantCommand(() -> {
+            m_drive.turnOnLocationLock(90);
+        }));
+
+    new JoystickButton(m_controller, DriverControllerConstants.B_BUTTON).onTrue(new InstantCommand(() -> {
+            m_drive.turnOnLocationLock(270);
+        }));
+
+
+  
   }
 
   private void setDefaultCommands(){
@@ -121,7 +128,7 @@ public class Robot extends TimedRobot {
     new PathPlannerAuto("Straight Auto");
     new PathPlannerAuto("S Curve");
     new PathPlannerAuto("Swerve Accuracy Test");
-    new PathPlannerAuto("Swerve Wait Auto");
+    new PathPlannerAuto("Swerve Wait Test");
     SmartDashboard.putData("Auto Mode", autoChooser);
   }
 

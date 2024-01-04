@@ -35,7 +35,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   private boolean m_isFieldCentric;
   private boolean m_rateLimit = true;
-
+  
   private boolean locationLock;
   private PIDController locationLockPID;
   private Boolean isRedAlliance;
@@ -93,7 +93,8 @@ public class DriveSubsystem extends SubsystemBase {
     m_isFieldCentric = startFieldCentric;
 
     locationLock = false;
-    locationLockPID = new PIDController(0.1, 0, 0);
+    locationLockPID = new PIDController(0.005, 0, 0);
+    locationLockPID.enableContinuousInput(0,360);
 
     fms_table = NetworkTableInstance.getDefault().getTable("FMSInfo");
     isRedAlliance = fms_table.getEntry("IsRedAlliance").getBoolean(true);
@@ -104,6 +105,8 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Robot Heading", getHeading());
     SmartDashboard.putBoolean("Field Centric", m_isFieldCentric);
     SmartDashboard.putData("Field", m_field);
+    SmartDashboard.putBoolean("Location Lock", locationLock);
+    SmartDashboard.putNumber("SET Angle", locationLockPID.getSetpoint());
   }
 
   /**
@@ -131,7 +134,8 @@ public class DriveSubsystem extends SubsystemBase {
       turnOffLocationLock();
     }
     if (locationLock) {
-        rotation = locationLockPID.calculate(-m_gyro.getAngle());
+        //rotation = locationLockPID.calculate(m_gyro.getAngle());
+        rotation = locationLockPID.calculate(-m_gyro.getAngle(), locationLockPID.getSetpoint());
     }
     drive(xSpeed, yspeed, rotation);
   }
