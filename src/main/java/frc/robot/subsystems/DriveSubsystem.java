@@ -115,10 +115,6 @@ public class DriveSubsystem extends SubsystemBase {
      */
   public void turnOnLocationLock(double angle) {
       locationLock = true;
-
-      if (isRedAlliance) {
-          angle += 180;
-      }
       
       locationLockPID.setSetpoint(angle);
       locationLockPID.calculate(-m_gyro.getAngle());
