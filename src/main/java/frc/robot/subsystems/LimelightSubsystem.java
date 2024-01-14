@@ -1,0 +1,76 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class LimelightSubsystem extends SubsystemBase {
+
+  public NetworkTable table;
+
+  double height_of_limelight = 8.5; //Inches
+  double height_of_target = 47.5; //Inches
+
+  double angle_of_limelight_degrees = 17; // Degrees
+  double angle_of_limelight_radians = 17 * (Math.PI/180); //Radians
+
+  /** Creates a new LimlightSubsystem. */
+  public LimelightSubsystem() {
+    table = NetworkTableInstance.getDefault().getTable("limelight");
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putBoolean("Targetted", is_Target());
+    SmartDashboard.putNumber("tx", get_Tx());
+    SmartDashboard.putNumber("ty", get_Ty());
+    SmartDashboard.putNumberArray("Tag ID", get_tag_id());
+    SmartDashboard.putNumber("distance", getDistance(angle_of_limelight_degrees));
+  }
+
+  public double get_Tx(){
+    return table.getEntry("tx").getDouble(0.0);
+  }
+
+  public double get_Ty(){
+    return table.getEntry("ty").getDouble(0.0);
+  }
+
+  public double get_Tv(){
+    return table.getEntry("tv").getDouble(0);
+  }
+
+  public double getDistance(double angle_of_limelight){
+    double distance = 0;
+
+    if (is_Target()){
+      //double tanValue = Math.tan((angle_of_limelight + get_Ty())*(Math.PI/180));
+      distance = (height_of_target - height_of_limelight) / Math.tan((angle_of_limelight + get_Ty())*(Math.PI/180));
+      distance = Math.abs(distance);
+    }
+    return distance;
+  }
+
+  public boolean is_Target(){
+    if (get_Tv() == 1) {  
+      return true;
+   } else {
+    return false;
+   }
+  }
+
+  public void setStream(int ivalue){ // 0 - standard (double stream if availibe), 1 - PiP secondary small, 2 - PiP secondary big
+    table.getEntry("stream").setNumber(ivalue);
+  }
+
+  public double[] get_tag_id(){
+    return table.getEntry("tid").getDoubleArray(new double[6]);
+  }
+
+  
+}

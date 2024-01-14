@@ -20,8 +20,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -39,8 +37,6 @@ public class DriveSubsystem extends SubsystemBase {
   
   private boolean locationLock;
   private PIDController locationLockPID;
-  private Boolean isRedAlliance;
-  private NetworkTable fms_table;
 
   private Field2d m_field = new Field2d();
   
@@ -96,9 +92,6 @@ public class DriveSubsystem extends SubsystemBase {
     locationLock = false;
     locationLockPID = new PIDController(0.005, 0, 0);
     locationLockPID.enableContinuousInput(0,360);
-
-    fms_table = NetworkTableInstance.getDefault().getTable("FMSInfo");
-    isRedAlliance = fms_table.getEntry("IsRedAlliance").getBoolean(true);
   }
 
   /* Outputs values to smartdashboard */

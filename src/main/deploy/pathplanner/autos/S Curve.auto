@@ -20,5 +20,6 @@
       ]
     }
   },
-  "folder": "Test_Autos"
+  "folder": "Test_Autos",
+  "choreoAuto": false
 }
