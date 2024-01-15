@@ -14,6 +14,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
@@ -46,7 +47,6 @@ public class PoseEstimator extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updatePose();
-    getpose2d();
   }
 
   public void updatePose(){
