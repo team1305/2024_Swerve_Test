@@ -83,6 +83,7 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearRight.getPosition()
       });
 
+
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem(Boolean startFieldCentric) {
     zeroHeading();  
@@ -142,7 +143,7 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     smartDashBoardOutput();
-    m_field.setRobotPose(getPose());
+    m_field.setRobotPose(PoseEstimator.getpose2d());
     // Update the odometry in the periodic block
     m_odometry.update(
         Rotation2d.fromDegrees(-m_gyro.getAngle()),
@@ -167,7 +168,7 @@ public class DriveSubsystem extends SubsystemBase {
    * Resets the odometry to the specified pose.
    *
    * @param pose The pose to which to set the odometry.
-   */
+   * */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
         Rotation2d.fromDegrees(-m_gyro.getAngle()),
@@ -306,9 +307,18 @@ public class DriveSubsystem extends SubsystemBase {
     return states;
   }
   
+  public SwerveModulePosition[] getModulePositions() {
+    return new SwerveModulePosition[] {
+      m_frontRight.getPosition(), 
+      m_frontLeft.getPosition(),
+      m_rearRight.getPosition(), 
+      m_rearLeft.getPosition()};
+  }
+
   public ChassisSpeeds getSpeeds() {
     return DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
   }
+
   /** Resets the drive encoders to currently read a position of 0. */
   public void resetEncoders() {
     m_frontLeft.resetEncoders();
@@ -329,6 +339,10 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getHeading() {
     return Rotation2d.fromDegrees(-m_gyro.getAngle()).getDegrees();
+  }
+
+  public Rotation2d getRotation2d(){
+    return Rotation2d.fromDegrees(-m_gyro.getAngle());
   }
 
   /**
@@ -376,6 +390,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /* Creates a target pose and command for the robot to travel to */
+  /// needs to be worked on
   public Command PathFindToPose(double x, double y, double rot, double endvelocity, double rotdelay ) {
     Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(rot));
     PathConstraints constraints = new PathConstraints(

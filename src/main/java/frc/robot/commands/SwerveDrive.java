@@ -40,13 +40,6 @@ public class SwerveDrive extends Command {
       -MathUtil.applyDeadband(m_Y.getAsDouble(), OIConstants.kDriveDeadband),
       -MathUtil.applyDeadband(m_X.getAsDouble(), OIConstants.kDriveDeadband),
       -MathUtil.applyDeadband(m_Z.getAsDouble(), OIConstants.kDriveDeadband));
-    /*
-    m_drive.drive(
-      -MathUtil.applyDeadband(m_Y.getAsDouble(), OIConstants.kDriveDeadband),
-      -MathUtil.applyDeadband(m_X.getAsDouble(), OIConstants.kDriveDeadband),
-      -MathUtil.applyDeadband(m_Z.getAsDouble(), OIConstants.kDriveDeadband)
-    );
-    */
   }
 
   // Called once the command ends or is interrupted.

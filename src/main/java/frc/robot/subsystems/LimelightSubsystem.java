@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -13,11 +14,11 @@ public class LimelightSubsystem extends SubsystemBase {
 
   public NetworkTable table;
 
-  double height_of_limelight = 8.5; //Inches
+  double height_of_limelight = 9.5; //Inches
   double height_of_target = 47.5; //Inches
 
-  double angle_of_limelight_degrees = 17; // Degrees
-  double angle_of_limelight_radians = 17 * (Math.PI/180); //Radians
+  double angle_of_limelight_degrees = 26.5; // Degrees
+  //double angle_of_limelight_radians = 17 * (Math.PI/180); //Radians
 
   /** Creates a new LimlightSubsystem. */
   public LimelightSubsystem() {
@@ -29,8 +30,9 @@ public class LimelightSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Targetted", is_Target());
     SmartDashboard.putNumber("tx", get_Tx());
     SmartDashboard.putNumber("ty", get_Ty());
-    SmartDashboard.putNumberArray("Tag ID", get_tag_id());
-    SmartDashboard.putNumber("distance", getDistance(angle_of_limelight_degrees));
+    SmartDashboard.putNumber("Tag ID", get_tag_id());
+    SmartDashboard.putNumber("distance", getDistance());
+    SmartDashboard.putNumberArray("botpose", get_botpose());
   }
 
   public double get_Tx(){
@@ -45,13 +47,16 @@ public class LimelightSubsystem extends SubsystemBase {
     return table.getEntry("tv").getDouble(0);
   }
 
-  public double getDistance(double angle_of_limelight){
+  public double getDistance(){
     double distance = 0;
 
     if (is_Target()){
-      //double tanValue = Math.tan((angle_of_limelight + get_Ty())*(Math.PI/180));
-      distance = (height_of_target - height_of_limelight) / Math.tan((angle_of_limelight + get_Ty())*(Math.PI/180));
-      distance = Math.abs(distance);
+
+    double angleToGoalDegrees = angle_of_limelight_degrees + get_Ty();
+    double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+
+    //calculate distance
+    distance = (height_of_target - height_of_limelight) / Math.tan(angleToGoalRadians);
     }
     return distance;
   }
@@ -68,9 +73,16 @@ public class LimelightSubsystem extends SubsystemBase {
     table.getEntry("stream").setNumber(ivalue);
   }
 
-  public double[] get_tag_id(){
-    return table.getEntry("tid").getDoubleArray(new double[6]);
+  public double get_tag_id(){
+    return table.getEntry("tid").getDouble(0);
   }
 
+  public double[] get_botpose(){
+    return table.getEntry("botpose").getDoubleArray(new double[6]);
+  }
+
+  public double get_Latency_From_Bot_Pose(){
+    return Timer.getFPGATimestamp() - (get_botpose()[6]/1000.0);
+  }
   
 }

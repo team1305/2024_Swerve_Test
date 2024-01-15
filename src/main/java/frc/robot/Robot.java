@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ToggleDriveCentricity;
-import frc.robot.commands.TurnToAprilTag;
 import frc.robot.Constants.DriverControllerConstants;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.DriveSubsystem;
@@ -37,14 +36,15 @@ import frc.robot.subsystems.LimelightSubsystem;
 public class Robot extends TimedRobot {
   
   private final DriveSubsystem m_drive = new DriveSubsystem(true);
-  private final LimelightSubsystem m_limelight = new LimelightSubsystem();
 
+  private final LimelightSubsystem m_limelight = new LimelightSubsystem();
 
   public static final XboxController m_controller = new XboxController(0);
   
   public static UsbCamera camera;
 
   private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -65,9 +65,6 @@ public class Robot extends TimedRobot {
     new JoystickButton(m_controller, DriverControllerConstants.START).onTrue(new ToggleDriveCentricity(m_drive));
     new JoystickButton(m_controller, DriverControllerConstants.LEFT_BUMPER).whileTrue(new RunCommand(() -> m_drive.setX(),m_drive));
     new JoystickButton(m_controller, DriverControllerConstants.BACK).whileTrue(new RunCommand(() -> m_drive.PathFindToPose(0.0, 0.0, 0.0, 0.0, 0.0), m_drive));
-    new JoystickButton(m_controller, DriverControllerConstants.RIGHT_BUMPER).whileTrue(new TurnToAprilTag(m_drive, m_limelight));
-
-
     new JoystickButton(m_controller, DriverControllerConstants.A_BUTTON).onTrue(new InstantCommand(() -> {
             m_drive.turnOnLocationLock(180);
         }));
