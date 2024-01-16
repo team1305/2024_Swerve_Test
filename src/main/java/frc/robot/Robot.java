@@ -25,6 +25,7 @@ import frc.robot.Constants.DriverControllerConstants;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.PoseEstimator;
 
 
 /**
@@ -38,6 +39,8 @@ public class Robot extends TimedRobot {
   private final DriveSubsystem m_drive = new DriveSubsystem(true);
 
   private final LimelightSubsystem m_limelight = new LimelightSubsystem();
+
+  private final PoseEstimator m_poseestimator = new PoseEstimator(m_drive, m_limelight);
 
   public static final XboxController m_controller = new XboxController(0);
   

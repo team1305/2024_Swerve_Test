@@ -143,7 +143,7 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     smartDashBoardOutput();
-    m_field.setRobotPose(PoseEstimator.getpose2d());
+    m_field.setRobotPose(PoseEstimator.getcurrentpose());
     // Update the odometry in the periodic block
     m_odometry.update(
         Rotation2d.fromDegrees(-m_gyro.getAngle()),

@@ -14,7 +14,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
@@ -24,15 +23,15 @@ public class PoseEstimator extends SubsystemBase {
 
   //THIS NEED TO BE TUNED
   private final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(5)); 
-  private final Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)); 
-  private static SwerveDrivePoseEstimator swervePoseEstimator;
+  private final Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(0, 0, Units.degreesToRadians(0)); //0,.5,0.5,30
+  private static SwerveDrivePoseEstimator poseEstimator;
 
   /** Creates a new PoseEstimator. */
   public PoseEstimator(DriveSubsystem m_drive, LimelightSubsystem m_limelight) {
     this.m_drive = m_drive;
     this.m_limelight = m_limelight;
 
-    swervePoseEstimator = new SwerveDrivePoseEstimator(
+    poseEstimator = new SwerveDrivePoseEstimator(
       DriveConstants.kDriveKinematics, 
       m_drive.getRotation2d(), 
       m_drive.getModulePositions(), 
@@ -40,26 +39,28 @@ public class PoseEstimator extends SubsystemBase {
       stateStdDevs, 
       visionMeasurementStdDevs);
 
-    swervePoseEstimator.addVisionMeasurement(visionPose(), m_limelight.get_Latency_From_Bot_Pose());
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    poseEstimator.addVisionMeasurement(visionPose(), m_limelight.get_Latency_From_Bot_Pose());
     updatePose();
   }
 
   public void updatePose(){
-   swervePoseEstimator.updateWithTime(Timer.getFPGATimestamp(), m_drive.getRotation2d(), m_drive.getModulePositions());
+   poseEstimator.updateWithTime(Timer.getFPGATimestamp(), m_drive.getRotation2d(), m_drive.getModulePositions());
   }
 
-  public static Pose2d getpose2d() {
-    return swervePoseEstimator.getEstimatedPosition();
+  public static Pose2d getcurrentpose() {
+    return poseEstimator.getEstimatedPosition();
+  
   }
 
-  public void resetpose(Pose2d pose){
-    swervePoseEstimator.resetPosition(m_drive.getRotation2d(), m_drive.getModulePositions(), pose);
+  public void setPose(Pose2d pose) {
+    poseEstimator.resetPosition(m_drive.getRotation2d(), m_drive.getModulePositions(), pose);
   }
+
 
   public Pose2d visionPose(){
     Rotation2d visionrot = Rotation2d.fromDegrees(m_limelight.get_botpose()[5]);
