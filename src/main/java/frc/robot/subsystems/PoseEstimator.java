@@ -14,7 +14,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
@@ -24,7 +23,7 @@ public class PoseEstimator extends SubsystemBase {
 
   //THIS NEED TO BE TUNED
   private final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(5)); 
-  private final Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(1000, 1000, Units.degreesToRadians(3600)); //0,.5,0.5,30
+  private final Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)); //0,.5,0.5,30
   private static SwerveDrivePoseEstimator poseEstimator;
 
   /** Creates a new PoseEstimator. */
@@ -45,12 +44,13 @@ public class PoseEstimator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    addvisionmeasurement();
     updatePose();
   }
 
   public void updatePose(){
    poseEstimator.updateWithTime(Timer.getFPGATimestamp(), m_drive.getRotation2d(), m_drive.getModulePositions());
+
+   poseEstimator.addVisionMeasurement(visionPose(), m_limelight.get_Latency_From_Bot_Pose());
   }
 
   public static Pose2d getcurrentpose() {
@@ -61,11 +61,6 @@ public class PoseEstimator extends SubsystemBase {
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(m_drive.getRotation2d(), m_drive.getModulePositions(), pose);
   }
-
-  public void addvisionmeasurement(){
-    poseEstimator.addVisionMeasurement(visionPose(), m_limelight.get_Latency_From_Bot_Pose());
-  }
-
 
   public Pose2d visionPose(){
     Rotation2d visionrot = Rotation2d.fromDegrees(m_limelight.get_botpose()[5]);
